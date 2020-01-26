@@ -37,14 +37,15 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
     contentType: content_type,
     knownLength: imagedata.length
   });
-  axios.post('https://upload.gyazo.com/upload.cgi', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      ...formData.getHeaders()
-    }
+  res = axios.post('https://upload.gyazo.com/upload.cgi', formData, {
+    headers: formData.getHeaders()
+  }).catch(error => {
+    const {
+      status,
+      statusText
+    } = error.response;
+    console.log(`Error! HTTP Status: ${status} ${statusText}`);
   });
-
-
 }
 
 module.exports = {
