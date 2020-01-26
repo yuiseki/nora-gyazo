@@ -71,12 +71,8 @@ ipcMain.on('gyazo-upload', (event, data)=>{
 
 // 1分おきに実行する処理を実行する関数
 function intervalFunction(){
-  if(settings.enableDirSync){
-    dirSyncModule.interval();
-  }
-  if(settings.enableFullScreen){
-    fullScreenModule.interval();
-  }
+  dirSyncModule.interval();
+  //fullScreenModule.interval();
 }
 
 

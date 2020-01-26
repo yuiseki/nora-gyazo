@@ -44,7 +44,7 @@
         // capture video frame to canvas
         const canvas = document.querySelector('canvas');
         canvas.getContext('2d').drawImage(video, 0, 0, width, height);
-        const base64DataURL = canvas.toDataURL('image/jpeg');
+        const base64DataURL = canvas.toDataURL('image/jpeg', 10);
         // unixtime
         const now = new Date();
         const unixtime = now.getTime();

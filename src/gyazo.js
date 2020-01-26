@@ -11,7 +11,8 @@ const FormData = require('form-data');
 let device_id = null;
 
 function upload(base64DataURL, content_type, file_name, title, url, desc, scale, created_at){
-  const imagedata = new Buffer(base64DataURL, 'base64');
+  const imagedata = Buffer.from(base64DataURL, 'base64');
+  console.log('gyazo upload: '+imagedata.length+' bytes');
   if(device_id===null){
     let device_id_path = null;
     device_id_path = path.join(app.getPath('appData'), 'Gyazo', 'id.txt');
@@ -44,7 +45,7 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
       status,
       statusText
     } = error.response;
-    console.log(`Error! HTTP Status: ${status} ${statusText}`);
+    console.log(`Gyazo Upload Error! HTTP Status: ${status} ${statusText}`);
   });
 }
 
