@@ -7,18 +7,18 @@ const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 
-// device_idは起動時に一回読み込めばいいのでグローバルで宣言する
+// device_id は起動時に一回読み込めばいいのでグローバルで宣言する
 let device_id = null;
 
 function upload(base64DataURL, content_type, file_name, title, url, desc, scale, created_at){
-  // base64の画像データをバイナリに変換する
+  // base64 の画像データをバイナリに変換する
   const imagedata = Buffer.from(base64DataURL, 'base64');
   console.log('gyazo upload: '+imagedata.length+' bytes');
 
-  // device_idがnullだったら読み込む
+  // device_id が null だったら読み込む
   if(device_id === null){
     let device_id_path = null;
-    let pf = process.platform
+    let pf = process.platform;
     switch (pf) {
       case 'win32':
         device_id_path = path.join(app.getPath('appData'), 'Gyazo', 'id.txt');
@@ -34,7 +34,7 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
   }
   console.log('gyazo device id: ' + device_id);
 
-  // Gyazoにアップロードするための multipart/form-data をつくる
+  // Gyazo にアップロードするための multipart/form-data をつくる
   const metadata = {
     app: "nora-gyazo",
     title: title,
@@ -52,6 +52,8 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
     contentType: content_type,
     knownLength: imagedata.length
   });
+
+  // gyazo upload api へ post する
   res = axios.post('https://upload.gyazo.com/upload.cgi', formData, {
     headers: formData.getHeaders()
   }).catch(error => {
