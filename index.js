@@ -3,6 +3,7 @@
 // nodejsのモジュール
 const path = require('path');
 const fs = require('fs');
+
 // Electronのモジュール
 const electron = require("electron");
 const app = electron.app;
@@ -15,22 +16,22 @@ ipcMain.on('update-settings', function(event) {
   console.log(settings);
 });
 
+// このアプリの各機能を実装しているモジュール
 const dirSyncModule = require('./module_dir_sync');
 const fullScreenModule = require('./module_full_screen');
 
+
 // settingsWindowはGCされないようにグローバル宣言
-let settingsWindow;
+let settingsWindow = null;
 // trayIconもGCされないようにグローバル宣言
 let trayIcon = null;
-
-
+// 設定データがGCされないようにグローバル宣言
+let settings = null;
 // 設定ファイルのパス
 let settingsPath = path.join(app.getPath('userData'), "settings.json");
-// 設定データがGCされないようにグローバル宣言
-let settings;
 
 
-// 起動時に実行される処理
+// アプリの起動時に実行される処理
 app.on('ready', function() {
   // 設定ファイルをロードする
   if(fs.existsSync(settingsPath)){
@@ -43,14 +44,17 @@ app.on('ready', function() {
     }
     fs.writeFileSync(settingsPath, JSON.stringify(settings));
   }
+  // remote.getGlobalを呼んだ時点でHTML側から読めるようになるらしい
   remote.getGlobal('settings');
+
   // タスクトレイにアイコンを表示する
   createTray();
   // 1分おきに実行される処理を定義する
   setInterval(intervalFunction, 60000);
 });
 
-// 1分おきに実行する処理を実装する関数
+
+// 1分おきに実行する処理を実行する関数
 function intervalFunction(){
   if(settings.enableDirSync){
     dirSyncModule.interval();
@@ -60,15 +64,18 @@ function intervalFunction(){
   }
 }
 
+
 // 設定画面を表示する関数
 function showSettingsWindow(){
   settingsWindow = new BrowserWindow({
     width: 1200,
     height: 600,
+    // require等nodeの機能を使うために必要
     webPreferences: {
       nodeIntegration: true
     }
   });
+  // メニューバーは不要
   settingsWindow.setMenu(null);
   // ローカルファイルをロード
   settingsWindow.loadURL(`file://${__dirname}/public/settings.html`);
@@ -106,7 +113,7 @@ function createTray(){
       }
     }
   ]);
-  // 右クリック時に表示するメニューをセット
+  // 右クリック時に表示するメニューをセットする
   trayIcon.setContextMenu(contextMenu);
 
   // タスクトレイアイコンをクリックしたときの処理
