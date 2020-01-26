@@ -3,7 +3,9 @@ const app = electron.app;
 
 const path = require('path');
 const fs = require('fs');
-const request = require('request');
+
+const axios = require('axios');
+const FormData = require('form-data');
 
 // device_idは一回読み込めばいいのでグローバルで宣言する
 let device_id = null;
@@ -25,27 +27,24 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
     desc: desc
   };
 
-  const formData = {
-    id: device_id,
-    scale: scale,
-    created_at: created_at,
-    metadata: JSON.stringify(metadata),
-    imagedata: {
-      value: imagedata,
-      options: {
-        filename: file_name,
-        contentType: content_type
-      }
-    }
-  };
-
-  console.log('form data: ');
-  console.log(formData);
-
-  request.post({url:'https://upload.gyazo.com/upload.cgi', formData: formData}, function optionalCallback(err, httpResponse, body) {
-    console.log(httpResponse.statusCode);
-    console.log(httpResponse.body);
+  let formData = new FormData();
+  formData.append("id", device_id);
+  formData.append("scale", scale);
+  formData.append("created_at", created_at);
+  formData.append("metadata", JSON.stringify(metadata));
+  formData.append("imagedata", imagedata, {
+    filename: file_name,
+    contentType: content_type,
+    knownLength: imagedata.length
   });
+  axios.post('https://upload.gyazo.com/upload.cgi', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      ...formData.getHeaders()
+    }
+  });
+
+
 }
 
 module.exports = {

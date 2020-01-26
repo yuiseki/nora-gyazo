@@ -57,7 +57,7 @@
             url: null,
             desc: "#nora_gyazo_full_screen",
             scale: "1.0",
-            created_at: String(unixtime)
+            created_at: unixtime
           }
           ipcRenderer.send('gyazo-upload', gyazodata);
         }finally{
