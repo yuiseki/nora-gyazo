@@ -22,7 +22,7 @@ function upload(base64DataURL, content_type, file_name, title, url, desc, scale,
         device_id_path = path.join(app.getPath('home'), 'Library', 'Gyazo', 'id');
         break;
       case 'linux':
-        device_id_path = path.join(app.getPath('home'), 'Library', 'Gyazo', 'id');
+        device_id_path = path.join(app.getPath('home'), '.gyazo.id');
         break;
     }
     device_id = fs.readFileSync(device_id_path, 'utf8');
