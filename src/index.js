@@ -44,8 +44,6 @@ app.on('ready', function() {
     }
     fs.writeFileSync(settingsPath, JSON.stringify(settings));
   }
-  // remote.getGlobalを呼んだ時点でHTML側から読めるようになるらしい
-  remote.getGlobal('settings');
 
   // タスクトレイにアイコンを表示する
   createTray();
@@ -69,7 +67,7 @@ function intervalFunction(){
 function showSettingsWindow(){
   settingsWindow = new BrowserWindow({
     width: 1200,
-    height: 600,
+    height: 1000,
     // require等nodeの機能を使うために必要
     webPreferences: {
       nodeIntegration: true
@@ -78,7 +76,7 @@ function showSettingsWindow(){
   // メニューバーは不要
   settingsWindow.setMenu(null);
   // ローカルファイルをロード
-  settingsWindow.loadURL(`file://${__dirname}/public/settings.html`);
+  settingsWindow.loadURL(`file://${__dirname}/settings.html`);
   // デバッグのために開発ツールを表示する
   settingsWindow.webContents.openDevTools();
   // 画面閉じたらnullにしとく
@@ -91,7 +89,7 @@ function showSettingsWindow(){
 // タスクトレイにアイコンを表示する関数
 function createTray(){
   // タスクトレイに表示するアイコンを指定（必須）
-  trayIcon = new Tray('./public/images/ninja.png');
+  trayIcon = new Tray('./src/images/ninja.png');
   // タスクトレイアイコンにマウスを載せたときのタイトルを指定
   trayIcon.setToolTip('Nora Gyazo');
 
