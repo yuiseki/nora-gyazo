@@ -13,12 +13,23 @@ let device_id = null;
 function upload(base64DataURL, content_type, file_name, title, url, desc, scale, created_at){
   const imagedata = Buffer.from(base64DataURL, 'base64');
   console.log('gyazo upload: '+imagedata.length+' bytes');
-  if(device_id===null){
+  if(device_id === null){
     let device_id_path = null;
-    device_id_path = path.join(app.getPath('appData'), 'Gyazo', 'id.txt');
+    let pf = process.platform
+    switch (pf) {
+      case 'win32':
+        device_id_path = path.join(app.getPath('appData'), 'Gyazo', 'id.txt');
+        break;
+      case 'darwin':
+        device_id_path = path.join(app.getPath('home'), 'Library', 'Gyazo', 'id');
+        break;
+      case 'linux':
+        device_id_path = path.join(app.getPath('home'), '.gyazo.id');
+        break;
+    }
     device_id = fs.readFileSync(device_id_path, 'utf8');
   }
-  console.log('gyazo device id: '+device_id);
+  console.log('gyazo device id: ' + device_id);
 
   // Gyazoにアップロードするための multipart/form-data をつくる
   const metadata = {
