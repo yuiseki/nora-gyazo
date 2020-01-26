@@ -3,18 +3,18 @@
 <html>
   <head>
     <script>
-        const electron = require('electron');
-        const remote = electron.remote;
-        const ipcRenderer = electron.ipcRenderer;
-        let settings = remote.getGlobal('settings');
-        console.log(settings);
-        //remote.getGlobal('settings') = {};
-        //ipcRenderer.send('update-settings');
+      const electron = require('electron');
+      const remote = electron.remote;
+      const ipcRenderer = electron.ipcRenderer;
+      let settings = remote.getGlobal('settings');
+      console.log(settings);
+      //remote.getGlobal('settings') = {};
+      //ipcRenderer.send('update-settings');
     </script>
   </head>
   <body>    
-    <h1>Nora Gyazo Settings</h1>
-    <div class="main"></div>
+    <h1>Nora Gyazo: Settings</h1>
+    <div id="react-root"></div>
 
     <div class="footer">
       We are using io.js <script>document.write(process.version)</script>

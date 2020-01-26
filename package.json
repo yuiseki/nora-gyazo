@@ -4,7 +4,8 @@
   "description": "",
   "main": "./src/index.js",
   "dependencies": {
-    "electron": "^7.1.10"
+    "electron": "^7.1.10",
+    "request": "^2.88.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,0 +1,77 @@
+<html>
+<head>
+<script>
+  const electron = require('electron');
+  const remote = electron.remote;
+  console = remote.require('console');
+  const ipcRenderer = electron.ipcRenderer;
+  const desktopCapturer = electron.desktopCapturer;
+
+  // electronのAPIで全画面キャプチャする
+  desktopCapturer.getSources({ types: ['screen'] }).then(async sources => {
+    for (const source of sources) {
+      let mediaStream = null;
+      try{
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            mandatory: {
+              chromeMediaSource: 'desktop',
+              chromeMediaSourceId: source.id
+            }
+          }
+        });
+        handleStream(mediaStream);
+      } catch (e) {
+        console.log('error!');
+        console.log(e);
+        console.log(e.stack);
+      }
+      return;
+    }
+  });
+
+  function handleStream (mediaStream) {
+    // render mediaStream to video object
+    const video = document.querySelector('video');
+    video.srcObject = mediaStream;
+    const width = mediaStream.getVideoTracks()[0].getSettings().width;
+    const height = mediaStream.getVideoTracks()[0].getSettings().height;
+    console.log("size: ", width, height);
+    video.onloadedmetadata = () => {
+      video.play();
+      setTimeout(() => {
+        // capture video frame to canvas
+        const canvas = document.querySelector('canvas');
+        canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+        const base64DataURL = canvas.toDataURL('image/jpeg');
+        // unixtime
+        const now = new Date();
+        const unixtime = now.getTime();
+        try{
+          gyazodata = {
+            base64DataURL: base64DataURL,
+            content_type: "image/jpeg",
+            file_name: "screenshot.jpg",
+            title: null,
+            url: null,
+            desc: "#nora_gyazo_full_screen",
+            scale: "1.0",
+            created_at: String(unixtime)
+          }
+          ipcRenderer.send('gyazo-upload', gyazodata);
+        }finally{
+          const window = remote.getCurrentWindow();
+          window.close();
+        }
+      }, 100);
+    };
+  };
+</script>
+
+</head>
+<body>
+  <video></video>
+  <canvas></canvas>
+</body>
+</html>

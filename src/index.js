@@ -10,13 +10,13 @@ const app = electron.app;
 const Tray = electron.Tray;
 const Menu = electron.Menu;
 const BrowserWindow = electron.BrowserWindow;
-const remote = electron.remote;
 const ipcMain = electron.ipcMain;
 ipcMain.on('update-settings', function(event) {
   console.log(settings);
 });
 
 // このアプリの各機能を実装しているモジュール
+const gyazo = require('./gyazo');
 const dirSyncModule = require('./module_dir_sync');
 const fullScreenModule = require('./module_full_screen');
 
@@ -28,7 +28,7 @@ let trayIcon = null;
 // 設定データがGCされないようにグローバル宣言
 let settings = null;
 // 設定ファイルのパス
-let settingsPath = path.join(app.getPath('userData'), "settings.json");
+let settingsPath = path.join(app.getPath('userData'), "node_gyazo_settings.json");
 
 
 // アプリの起動時に実行される処理
@@ -40,7 +40,7 @@ app.on('ready', function() {
     // 設定ファイルがなかったら生成して設置する
     settings = {
       'enableDirSync': false,
-      'enableFullScreen': false
+      'enableFullScreen': true
     }
     fs.writeFileSync(settingsPath, JSON.stringify(settings));
   }
@@ -49,8 +49,25 @@ app.on('ready', function() {
   createTray();
   // 1分おきに実行される処理を定義する
   setInterval(intervalFunction, 60000);
+  intervalFunction();
 });
 
+app.on('window-all-closed', () => {
+
+});
+
+ipcMain.on('gyazo-upload', (event, data)=>{
+  gyazo.upload(
+    data.base64DataURL,
+    data.content_type,
+    data.file_name,
+    data.title,
+    data.url,
+    data.desc,
+    data.scale,
+    data.created_at
+  );
+});
 
 // 1分おきに実行する処理を実行する関数
 function intervalFunction(){
