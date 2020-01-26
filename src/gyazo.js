@@ -7,12 +7,15 @@ const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 
-// device_idは一回読み込めばいいのでグローバルで宣言する
+// device_idは起動時に一回読み込めばいいのでグローバルで宣言する
 let device_id = null;
 
 function upload(base64DataURL, content_type, file_name, title, url, desc, scale, created_at){
+  // base64の画像データをバイナリに変換する
   const imagedata = Buffer.from(base64DataURL, 'base64');
   console.log('gyazo upload: '+imagedata.length+' bytes');
+
+  // device_idがnullだったら読み込む
   if(device_id === null){
     let device_id_path = null;
     let pf = process.platform
