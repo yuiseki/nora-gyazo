@@ -9,7 +9,7 @@ let invisibleWindow = null;
 
 function interval(){
   console.log('module_full_screen: interval');
-
+  // 不可視のWindowを生成する
   invisibleWindow = new BrowserWindow({
     width: 0,
     height: 0,

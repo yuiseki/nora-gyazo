@@ -52,10 +52,12 @@ app.on('ready', function() {
   intervalFunction();
 });
 
+// 全Windowが閉じたときの処理を上書きして終了しないようにする
 app.on('window-all-closed', () => {
 
 });
 
+// レンダラープロセスとのプロセス間通信を定義する
 ipcMain.on('gyazo-upload', (event, data)=>{
   gyazo.upload(
     data.base64DataURL,
@@ -69,7 +71,8 @@ ipcMain.on('gyazo-upload', (event, data)=>{
   );
 });
 
-// 1分おきに実行する処理を実行する関数
+// 1分おきに実行したい処理を実行する関数
+// TODO 設定情報をみて実行するかしないかをきめる
 function intervalFunction(){
   dirSyncModule.interval();
   //fullScreenModule.interval();
@@ -126,7 +129,6 @@ function createTray(){
   ]);
   // 右クリック時に表示するメニューをセットする
   trayIcon.setContextMenu(contextMenu);
-
   // タスクトレイアイコンをクリックしたときの処理
   // 右クリック時と同じにしておく
   trayIcon.on('click', () => {

@@ -3,6 +3,8 @@
 <script>
   const electron = require('electron');
   const remote = electron.remote;
+  // console.logをターミナルに出力するためにメインプロセスのconsoleに置き換える
+  // MEMO: DOM elementなどレンダラープロセス専用のオブジェクトを渡そうとするとその行で固まるので注意！！！
   console = remote.require('console');
   const ipcRenderer = electron.ipcRenderer;
   const desktopCapturer = electron.desktopCapturer;
@@ -32,12 +34,13 @@
   });
 
   function handleStream (mediaStream) {
+    // TODO set video and canvas size
+    const width = mediaStream.getVideoTracks()[0].getSettings().width;
+    const height = mediaStream.getVideoTracks()[0].getSettings().height;
+    console.log("size:", width, height);
     // render mediaStream to video object
     const video = document.querySelector('video');
     video.srcObject = mediaStream;
-    const width = mediaStream.getVideoTracks()[0].getSettings().width;
-    const height = mediaStream.getVideoTracks()[0].getSettings().height;
-    console.log("size: ", width, height);
     video.onloadedmetadata = () => {
       video.play();
       setTimeout(() => {
